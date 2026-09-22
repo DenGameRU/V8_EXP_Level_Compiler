@@ -20,14 +20,14 @@ The extractor systematically slices the data stream using the following map:
 
 ## Usage
 ### Decompiling Levels (Unpacking)
-1. Launch the compiled utility and click **Button1**.
+1. Launch the compiled utility and click **UNPACK**.
 2. Select any valid map asset archive (e.g., `ROUTE66.EXP`).
 3. The tool generates a designated `level\` folder, writes individual content nodes (`.tim`, `.txt`), and maps a build layout file (`!files.cfg`).
 
 ### Compiling Levels (Packing)
 1. Place your edited maps, textures, or text scripts inside the `level\` folder.
 2. Ensure the structural keys inside `!files.cfg` remain uncorrupted.
-3. Click **Button2** to compile the directory layout. The application outputs a reconstructed `NEW_LEVEL.EXP` ready for console emulation deployment.
+3. Click **PACK** to compile the directory layout. The application outputs a reconstructed `NEW_LEVEL.EXP` ready for console emulation deployment.
 
 ## Original Credits
 Developed by **DenGame** in collaboration with advanced parsing subroutines. Released under an open-source initiative to preserve legacy PlayStation 1 reverse-engineering tooling.
