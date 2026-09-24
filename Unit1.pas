@@ -43,7 +43,7 @@ begin
 end;
 
 // ==========================================
-// ПОСЛЕДОВАТЕЛЬНАЯ РАСПАКОВКА С УЧЕТОМ BSP
+// РџРћРЎР›Р•Р”РћР’РђРўР•Р›Р¬РќРђРЇ Р РђРЎРџРђРљРћР’РљРђ РЎ РЈР§Р•РўРћРњ BSP
 // ==========================================
 procedure TForm1.Button1Click(Sender: TObject);
 var
@@ -64,13 +64,13 @@ var
   IsFirstFile: Boolean;
   IsBSP: Boolean;
 begin
-  OpenDialog1.Title := 'Выберите файл Vigilante 8 для распаковки';
-  OpenDialog1.Filter := 'Файлы данных (*.EXP)|*.EXP|Все файлы (*.*)|*.*';
+  OpenDialog1.Title := 'Р’С‹Р±РµСЂРёС‚Рµ С„Р°Р№Р» Vigilante 8 РґР»СЏ СЂР°СЃРїР°РєРѕРІРєРё';
+  OpenDialog1.Filter := 'Р¤Р°Р№Р»С‹ РґР°РЅРЅС‹С… (*.EXP)|*.EXP|Р’СЃРµ С„Р°Р№Р»С‹ (*.*)|*.*';
 
   if not OpenDialog1.Execute then Exit;
 
   Memo1.Clear;
-  Log('--- Начало распаковки архива V8 ---');
+  Log('--- РќР°С‡Р°Р»Рѕ СЂР°СЃРїР°РєРѕРІРєРё Р°СЂС…РёРІР° V8 ---');
   
   LevelPath := ExtractFilePath(Application.ExeName) + 'level\';
   ForceDirectories(LevelPath);
@@ -87,8 +87,8 @@ begin
     FS.ReadBuffer(GlobalSign, 4);
     FS.ReadBuffer(GlobalSizeBE, 4);
     
-    Log('Глобальный заголовок: ' + Copy(GlobalSign, 1, 4));
-    Log('Размер данных: ' + IntToStr(Swap32(GlobalSizeBE)) + ' байт');
+    Log('Р“Р»РѕР±Р°Р»СЊРЅС‹Р№ Р·Р°РіРѕР»РѕРІРѕРє: ' + Copy(GlobalSign, 1, 4));
+    Log('Р Р°Р·РјРµСЂ РґР°РЅРЅС‹С…: ' + IntToStr(Swap32(GlobalSizeBE)) + ' Р±Р°Р№С‚');
     Log('----------------------------------------------------');
 
     IsFirstFile := True;
@@ -99,7 +99,7 @@ begin
       CurrentTag := '';
       IsBSP := False;
 
-      // 1. ОПРЕДЕЛЯЕМ ИМЯ И ТИП ТЕГА
+      // 1. РћРџР Р•Р”Р•Р›РЇР•Рњ РРњРЇ Р РўРРџ РўР•Р“Рђ
       if IsFirstFile then
       begin
         FS.ReadBuffer(Tag8, 8);
@@ -110,39 +110,39 @@ begin
       end
       else
       begin
-        // Читаем сначала 4 байта, чтобы проверить, не BSP ли это
+        // Р§РёС‚Р°РµРј СЃРЅР°С‡Р°Р»Р° 4 Р±Р°Р№С‚Р°, С‡С‚РѕР±С‹ РїСЂРѕРІРµСЂРёС‚СЊ, РЅРµ BSP Р»Рё СЌС‚Рѕ
         FS.ReadBuffer(Tag4, 4);
         for i := 0 to 3 do
           if Tag4[i] <> #0 then CurrentTag := CurrentTag + Tag4[i];
         
-        // УНИКАЛЬНОЕ УТОЧНЕНИЕ: Если встретили тег BSP (с пробелом или без)
+        // РЈРќРРљРђР›Р¬РќРћР• РЈРўРћР§РќР•РќРР•: Р•СЃР»Рё РІСЃС‚СЂРµС‚РёР»Рё С‚РµРі BSP (СЃ РїСЂРѕР±РµР»РѕРј РёР»Рё Р±РµР·)
         if (Trim(CurrentTag) = 'BSP') then
         begin
           CurrentTag := 'BSP ';
           IsBSP := True;
-          // Указатель FS.Position сейчас стоит идеально: сразу после 4 байт 'BSP ' 
-          // и указывает прямо на 4 байта размера! Ничего дочитывать не нужно.
+          // РЈРєР°Р·Р°С‚РµР»СЊ FS.Position СЃРµР№С‡Р°СЃ СЃС‚РѕРёС‚ РёРґРµР°Р»СЊРЅРѕ: СЃСЂР°Р·Сѓ РїРѕСЃР»Рµ 4 Р±Р°Р№С‚ 'BSP ' 
+          // Рё СѓРєР°Р·С‹РІР°РµС‚ РїСЂСЏРјРѕ РЅР° 4 Р±Р°Р№С‚Р° СЂР°Р·РјРµСЂР°! РќРёС‡РµРіРѕ РґРѕС‡РёС‚С‹РІР°С‚СЊ РЅРµ РЅСѓР¶РЅРѕ.
         end
         else
         begin
-          // Для обычных файлов имя имеет длину 4 байта, считываем дальше как обычно
+          // Р”Р»СЏ РѕР±С‹С‡РЅС‹С… С„Р°Р№Р»РѕРІ РёРјСЏ РёРјРµРµС‚ РґР»РёРЅСѓ 4 Р±Р°Р№С‚Р°, СЃС‡РёС‚С‹РІР°РµРј РґР°Р»СЊС€Рµ РєР°Рє РѕР±С‹С‡РЅРѕ
           CurrentTag := Trim(CurrentTag);
         end;
       end;
 
       if CurrentTag = '' then Break;
 
-      // 2. ЧИТАЕМ РАЗМЕР БЛОКА
+      // 2. Р§РРўРђР•Рњ Р РђР—РњР•Р  Р‘Р›РћРљРђ
       FS.ReadBuffer(ChunkSizeBE, 4);
       ChunkSizeLE := Swap32(ChunkSizeBE);
 
       if (FS.Position + ChunkSizeLE > FS.Size) then
       begin
-        Log(Format('[0x%8.8X] Ошибка фазы чтения на теге %s. Размер: %d', [StartOffset, CurrentTag, ChunkSizeLE]));
+        Log(Format('[0x%8.8X] РћС€РёР±РєР° С„Р°Р·С‹ С‡С‚РµРЅРёСЏ РЅР° С‚РµРіРµ %s. Р Р°Р·РјРµСЂ: %d', [StartOffset, CurrentTag, ChunkSizeLE]));
         Break;
       end;
 
-      // 3. СЧИТАЕМ ИНДЕКС ДЛЯ ИМЕНИ
+      // 3. РЎР§РРўРђР•Рњ РРќР”Р•РљРЎ Р”Р›РЇ РРњР•РќР
       Idx := NameCounters.IndexOf(CurrentTag);
       if Idx = -1 then
       begin
@@ -154,21 +154,25 @@ begin
         NameCounters.Objects[Idx] := TObject(Count);
       end;
 
-      // Выставляем расширения
+      // Р’С‹СЃС‚Р°РІР»СЏРµРј СЂР°СЃС€РёСЂРµРЅРёСЏ
       if (CurrentTag = 'TERRTITL') or (CurrentTag = 'TEXT') then Ext := '.txt'
       else if (CurrentTag = 'XBMP') or (CurrentTag = 'XBGM') then Ext := '.tim'
+      else if (CurrentTag = 'COLS') then Ext := '.clr'
+      else if (CurrentTag = 'FORM') then Ext := '.dat'
+      else if (CurrentTag = 'ZMAP') then Ext := '.map'
+      else if (CurrentTag = 'ZONE') then Ext := '.zon'
       else Ext := '';
 
       SavedName := Format('%s%.4d%s', [Trim(CurrentTag), Count, Ext]);
-      Log(Format('[0x%8.8X] Извлечение: %s (%d байт)', [StartOffset, SavedName, ChunkSizeLE]));
+      Log(Format('[0x%8.8X] РР·РІР»РµС‡РµРЅРёРµ: %s (%d Р±Р°Р№С‚)', [StartOffset, SavedName, ChunkSizeLE]));
 
-      // Записываем в манифест признак BSP, чтобы пакер знал, как собирать
+      // Р—Р°РїРёСЃС‹РІР°РµРј РІ РјР°РЅРёС„РµСЃС‚ РїСЂРёР·РЅР°Рє BSP, С‡С‚РѕР±С‹ РїР°РєРµСЂ Р·РЅР°Р», РєР°Рє СЃРѕР±РёСЂР°С‚СЊ
       if IsBSP then
         Manifest.Add(SavedName + '=BSP_SPECIAL')
       else
         Manifest.Add(SavedName + '=' + CurrentTag);
 
-      // 4. СОХРАНЯЕМ НА ДИСК
+      // 4. РЎРћРҐР РђРќРЇР•Рњ РќРђ Р”РРЎРљ
       OutFile := TFileStream.Create(LevelPath + SavedName, fmCreate);
       try
         if ChunkSizeLE > 0 then
@@ -177,7 +181,7 @@ begin
         OutFile.Free;
       end;
 
-      // Выравнивание по четной границе (модифицировано под вашу логику)
+      // Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ РїРѕ С‡РµС‚РЅРѕР№ РіСЂР°РЅРёС†Рµ (РјРѕРґРёС„РёС†РёСЂРѕРІР°РЅРѕ РїРѕРґ РІР°С€Сѓ Р»РѕРіРёРєСѓ)
       if (ChunkSizeLE mod 2) <> 0 then
       begin
         if FS.Position < FS.Size then
@@ -193,7 +197,7 @@ begin
 
     Manifest.SaveToFile(LevelPath + '!files.cfg');
     ProgressBar1.Position := ProgressBar1.Max;
-    Log('=== РАСПАКОВКА УСПЕШНО ЗАВЕРШЕНА! ===');
+    Log('=== Р РђРЎРџРђРљРћР’РљРђ РЈРЎРџР•РЁРќРћ Р—РђР’Р•Р РЁР•РќРђ! ===');
 
   finally
     NameCounters.Free;
@@ -203,7 +207,7 @@ begin
 end;
 
 // ==========================================
-// СБОРКА С УЧЕТОМ УНИКАЛЬНОГО BSP
+// РЎР‘РћР РљРђ РЎ РЈР§Р•РўРћРњ РЈРќРРљРђР›Р¬РќРћР“Рћ BSP
 // ==========================================
 procedure TForm1.Button2Click(Sender: TObject);
 var
@@ -224,12 +228,12 @@ begin
 
   if not FileExists(LevelPath + '!files.cfg') then
   begin
-    ShowMessage('Ошибка: Не найден файл манифеста level/!files.cfg!');
+    ShowMessage('РћС€РёР±РєР°: РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р» РјР°РЅРёС„РµСЃС‚Р° level/!files.cfg!');
     Exit;
   end;
 
   Memo1.Clear;
-  Log('--- Начало сборки архива ---');
+  Log('--- РќР°С‡Р°Р»Рѕ СЃР±РѕСЂРєРё Р°СЂС…РёРІР° ---');
 
   Manifest := TStringList.Create;
   FS := TFileStream.Create(ExtractFilePath(Application.ExeName) + 'NEW_LEVEL.EXP', fmCreate);
@@ -259,9 +263,9 @@ begin
 
       if not FileExists(LevelPath + SavedName) then Continue;
 
-      Log('Упаковка: ' + SavedName);
+      Log('РЈРїР°РєРѕРІРєР°: ' + SavedName);
 
-      // ЗАПИСЬ ЗАГОЛОВКА
+      // Р—РђРџРРЎР¬ Р—РђР“РћР›РћР’РљРђ
       if IsFirstFile then
       begin
         FillChar(Tag8, 8, #0);
@@ -272,7 +276,7 @@ begin
       end
       else if OriginalTag = 'BSP_SPECIAL' then
       begin
-        // Если это наш уникальный BSP блок, пишем ровно 4 байта 'BSP '
+        // Р•СЃР»Рё СЌС‚Рѕ РЅР°С€ СѓРЅРёРєР°Р»СЊРЅС‹Р№ BSP Р±Р»РѕРє, РїРёС€РµРј СЂРѕРІРЅРѕ 4 Р±Р°Р№С‚Р° 'BSP '
         Tag4 := 'BSP ';
         FS.WriteBuffer(Tag4, 4);
       end
@@ -284,7 +288,7 @@ begin
         FS.WriteBuffer(Tag4, 4);
       end;
 
-      // ЗАПИСЬ РАЗМЕРА И ТЕЛА
+      // Р—РђРџРРЎР¬ Р РђР—РњР•Р Рђ Р РўР•Р›Рђ
       InFile := TFileStream.Create(LevelPath + SavedName, fmOpenRead or fmShareDenyNone);
       try
         ChunkSizeLE := InFile.Size;
@@ -308,7 +312,7 @@ begin
     FS.WriteBuffer(GlobalSizeBE, 4);
 
     ProgressBar1.Position := ProgressBar1.Max;
-    Log('=== СБОРКА УСПЕШНО ЗАВЕРШЕНА! ===');
+    Log('=== РЎР‘РћР РљРђ РЈРЎРџР•РЁРќРћ Р—РђР’Р•Р РЁР•РќРђ! ===');
 
   finally
     Manifest.Free;
